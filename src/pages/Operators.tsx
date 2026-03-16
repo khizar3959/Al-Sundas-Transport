@@ -20,14 +20,37 @@ interface Operator {
   status: OperatorStatus;
 }
 
-const mockOperators: Operator[] = [
+const initialOperators: Operator[] = [
   { id: '1', name: 'Ahmed Khan', phone: '+971 50 123 4567', emiratesId: '784-1234-5678901-1', licenseNumber: 'DXB-98765', licenseExpiry: '2026-05-12', salary: 'AED 3,500', assignedVehicle: 'Bobcat S450', status: 'Active' },
-  { id: '2', name: 'Muhammad Ali', phone: '+971 55 987 6543', emiratesId: '784-9876-5432109-2', licenseNumber: 'DXB-12345', licenseExpiry: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], salary: 'AED 4,000', assignedVehicle: 'Excavator 320', status: 'Active' }, // Expiring in 4 days
-  { id: '3', name: 'Sajid Mehmood', phone: '+971 52 456 7890', emiratesId: '784-4567-8901234-3', licenseNumber: 'DXB-54321', licenseExpiry: '2023-10-01', salary: 'AED 3,200', assignedVehicle: 'None', status: 'Leave' }, // Expired
+  { id: '2', name: 'Muhammad Ali', phone: '+971 55 987 6543', emiratesId: '784-9876-5432109-2', licenseNumber: 'DXB-12345', licenseExpiry: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], salary: 'AED 4,000', assignedVehicle: 'Excavator 320', status: 'Active' },
+  { id: '3', name: 'Sajid Mehmood', phone: '+971 52 456 7890', emiratesId: '784-4567-8901234-3', licenseNumber: 'DXB-54321', licenseExpiry: '2023-10-01', salary: 'AED 3,200', assignedVehicle: 'None', status: 'Leave' },
 ];
 
 export default function Operators() {
+  const [operators, setOperators] = useState<Operator[]>(initialOperators);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleDelete = (id: string) => {
+    setOperators(operators.filter(op => op.id !== id));
+  };
+
+  const handleAddOperator = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newOperator: Operator = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: formData.get('name') as string,
+      phone: formData.get('phone') as string,
+      emiratesId: formData.get('emiratesId') as string,
+      licenseNumber: formData.get('licenseNumber') as string,
+      licenseExpiry: formData.get('licenseExpiry') as string,
+      salary: formData.get('salary') as string,
+      assignedVehicle: 'None',
+      status: 'Active',
+    };
+    setOperators([...operators, newOperator]);
+    setIsAddModalOpen(false);
+  };
 
   // Helper to determine expiry status
   const getExpiryStatus = (dateStr: string) => {
@@ -71,7 +94,11 @@ export default function Operators() {
           <button className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-md transition-colors" title="Edit">
             <Edit className="w-4 h-4" />
           </button>
-          <button className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors" title="Delete">
+          <button 
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors" 
+            title="Delete"
+            onClick={() => handleDelete(row.id)}
+          >
             <Trash2 className="w-4 h-4" />
           </button>
         </div>
@@ -89,7 +116,7 @@ export default function Operators() {
       </div>
 
       <DataTable 
-        data={mockOperators} 
+        data={operators} 
         columns={columns} 
         searchPlaceholder="Search operators by name or ID..."
         onAddClick={() => setIsAddModalOpen(true)}
@@ -101,31 +128,31 @@ export default function Operators() {
         onClose={() => setIsAddModalOpen(false)}
         title="Add New Operator"
       >
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsAddModalOpen(false); }}>
+        <form className="space-y-4" onSubmit={handleAddOperator}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Full Name</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Ahmed Khan" />
+              <input type="text" name="name" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Ahmed Khan" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone Number</label>
-              <input type="tel" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="+971 50 000 0000" />
+              <input type="tel" name="phone" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="+971 50 000 0000" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Emirates ID</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="784-0000-0000000-0" />
+              <input type="text" name="emiratesId" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="784-0000-0000000-0" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">License Number</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="License Number" />
+              <input type="text" name="licenseNumber" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="License Number" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">License Expiry Date</label>
-              <input type="date" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
+              <input type="date" name="licenseExpiry" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Salary (AED)</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="3,500" />
+              <input type="text" name="salary" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="3,500" />
             </div>
           </div>
           
