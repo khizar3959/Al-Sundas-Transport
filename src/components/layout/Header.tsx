@@ -1,8 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Bell, Moon, Sun, Menu, User } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, Bell, Moon, Sun, Menu, User, Settings, LogOut, Shield } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../auth/AuthContext';
 
 export default function Header({ toggleSidebar }: { toggleSidebar: () => void }) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Check local storage or system preference
@@ -66,12 +88,44 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
 
         <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
-        <button className="flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-          <div className="w-7 h-7 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
-            <User className="w-4 h-4" />
-          </div>
-          <span className="text-sm font-medium hidden md:block text-slate-700 dark:text-slate-300">Admin</span>
-        </button>
+        <div className="relative" ref={userMenuRef}>
+          <button 
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="flex items-center gap-2 p-1 pl-2 pr-3 rounded-full border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+          >
+            <div className="w-7 h-7 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400">
+              <User className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-medium hidden md:block text-slate-700 dark:text-slate-300">Admin</span>
+          </button>
+          
+          {userMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#11131e] rounded-lg shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden z-20">
+              <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+                <p className="text-sm text-slate-900 dark:text-white font-medium">Administrator</p>
+                <p className="text-xs text-slate-500 truncate">{user?.email || 'admin@alsundas.com'}</p>
+              </div>
+              <div className="p-1">
+                <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors w-full text-left" onClick={() => setUserMenuOpen(false)}>
+                  <Shield className="w-4 h-4" /> Admin Panel
+                </Link>
+                <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors w-full text-left" onClick={() => setUserMenuOpen(false)}>
+                  <Settings className="w-4 h-4" /> Settings
+                </Link>
+                <div className="h-px bg-slate-200 dark:bg-slate-800 my-1"></div>
+                <button 
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors w-full text-left" 
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    handleSignOut();
+                  }}
+                >
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

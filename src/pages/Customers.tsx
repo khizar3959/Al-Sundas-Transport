@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 import { DataTable } from '../components/ui/DataTable';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
-import { Edit, Mail, Phone, ExternalLink } from 'lucide-react';
+import { Mail, Phone, Trash2 } from 'lucide-react';
 
 interface Customer {
   id: string;
@@ -11,20 +12,82 @@ interface Customer {
   company: string;
   phone: string;
   email: string;
-  address: string;
-  totalRentals: number;
-  totalPayments: number;
-  outstandingBalance: number;
+  address?: string;
+  total_rentals?: number;
+  total_payments?: number;
+  outstanding_balance?: number;
+  created_at?: string;
 }
 
-const mockCustomers: Customer[] = [
-  { id: 'CUS-001', name: 'Tariq Al Habtoor', company: 'Emirates Contracting', phone: '+971 50 111 2222', email: 'tariq@emirates-contracting.ae', address: 'Business Bay, Dubai', totalRentals: 15, totalPayments: 245000, outstandingBalance: 12000 },
-  { id: 'CUS-002', name: 'Faisal Al Maktoum', company: 'Dubai Builders', phone: '+971 55 333 4444', email: 'faisal@dubaibuilders.ae', address: 'Al Quoz Ind 2, Dubai', totalRentals: 4, totalPayments: 45000, outstandingBalance: 0 },
-  { id: 'CUS-003', name: 'Sarah Smith', company: 'Al Futtaim', phone: '+971 52 555 6666', email: 'procurement@alfuttaim.ae', address: 'Dubai Festival City', totalRentals: 32, totalPayments: 1250000, outstandingBalance: 45000 },
-];
-
 export default function Customers() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('customers')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching customers:', error);
+    } else {
+      setCustomers(data || []);
+    }
+    setIsLoading(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this customer?')) return;
+    
+    const { error } = await supabase
+      .from('customers')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting customer:', error);
+      alert('Failed to delete customer. They might have active rentals.');
+    } else {
+      setCustomers(customers.filter(c => c.id !== id));
+    }
+  };
+
+  const handleAddCustomer = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    
+    // Create random dummy email if missing
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string || `${name.replace(/\s+/g, '').toLowerCase()}@example.com`;
+
+    const newCustomer = {
+      name,
+      company: formData.get('company') as string,
+      phone: formData.get('phone') as string,
+      email,
+      status: 'Active',
+    };
+
+    const { data, error } = await supabase
+      .from('customers')
+      .insert([newCustomer])
+      .select();
+
+    if (error) {
+      console.error('Error adding customer:', error);
+      alert('Failed to add customer.');
+    } else if (data) {
+      setCustomers([data[0], ...customers]);
+      setIsAddModalOpen(false);
+    }
+  };
 
   const columns = [
     { 
@@ -49,33 +112,37 @@ export default function Customers() {
       header: 'Total Rentals', 
       cell: (row: Customer) => (
         <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm">
-          {row.totalRentals}
+          {row.total_rentals || 0}
         </span>
       )
     },
     { 
       header: 'Total Payments', 
       cell: (row: Customer) => (
-         <span className="text-emerald-600 dark:text-emerald-400 font-medium">AED {row.totalPayments.toLocaleString()}</span>
+         <span className="text-emerald-600 dark:text-emerald-400 font-medium">AED {(row.total_payments || 0).toLocaleString()}</span>
       )
     },
     { 
       header: 'Outstanding Balance', 
-      cell: (row: Customer) => (
-        <Badge variant={row.outstandingBalance > 0 ? 'danger' : 'success'}>
-          {row.outstandingBalance > 0 ? `AED ${row.outstandingBalance.toLocaleString()}` : 'Settled'}
-        </Badge>
-      )
+      cell: (row: Customer) => {
+        const balance = row.outstanding_balance || 0;
+        return (
+          <Badge variant={balance > 0 ? 'danger' : 'success'}>
+            {balance > 0 ? `AED ${balance.toLocaleString()}` : 'Settled'}
+          </Badge>
+        )
+      }
     },
     {
       header: 'Actions',
-      cell: () => (
+      cell: (row: Customer) => (
         <div className="flex flex-row items-center gap-2">
-          <button className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-md transition-colors" title="View Details">
-            <ExternalLink className="w-4 h-4" />
-          </button>
-          <button className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-md transition-colors" title="Edit">
-            <Edit className="w-4 h-4" />
+          <button 
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors" 
+            title="Delete"
+            onClick={() => handleDelete(row.id)}
+          >
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       )
@@ -92,11 +159,12 @@ export default function Customers() {
       </div>
 
       <DataTable 
-        data={mockCustomers} 
+        data={customers} 
         columns={columns} 
         searchPlaceholder="Search customers by name, company, or phone..."
         onAddClick={() => setIsAddModalOpen(true)}
         addLabel="Add Customer"
+        isLoading={isLoading}
       />
 
       <Modal
@@ -104,27 +172,27 @@ export default function Customers() {
         onClose={() => setIsAddModalOpen(false)}
         title="Add New Customer"
       >
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsAddModalOpen(false); }}>
+        <form className="space-y-4" onSubmit={handleAddCustomer}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Customer Name</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Tariq Al Habtoor" />
+              <input type="text" name="name" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Tariq Al Habtoor" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Company Name</label>
-              <input type="text" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Emirates Contracting" />
+              <input type="text" name="company" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Emirates Contracting" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</label>
-              <input type="tel" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="+971 50 111 2222" />
+              <input type="tel" name="phone" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="+971 50 111 2222" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
-              <input type="email" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="email@company.ae" />
+              <input type="email" name="email" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="email@company.ae" />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Billing Address</label>
-              <textarea rows={2} className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="Full address..."></textarea>
+              <textarea name="address" rows={2} className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="Full address..."></textarea>
             </div>
           </div>
           

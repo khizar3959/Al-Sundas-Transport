@@ -13,9 +13,10 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   onAddClick?: () => void;
   addLabel?: string;
+  isLoading?: boolean;
 }
 
-export function DataTable<T>({ data, columns, searchPlaceholder = 'Search...', onAddClick, addLabel }: DataTableProps<T>) {
+export function DataTable<T>({ data, columns, searchPlaceholder = 'Search...', onAddClick, addLabel, isLoading = false }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState('');
 
   return (
@@ -57,7 +58,16 @@ export function DataTable<T>({ data, columns, searchPlaceholder = 'Search...', o
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-            {data.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan={columns.length} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-4 h-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin"></div>
+                    <span>Loading data...</span>
+                  </div>
+                </td>
+              </tr>
+            ) : data.length > 0 ? (
               data.map((row, i) => (
                 <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                   {columns.map((col, j) => (

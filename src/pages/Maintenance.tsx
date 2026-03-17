@@ -17,14 +17,36 @@ interface MaintenanceLog {
   nextDate: string;
 }
 
-const mockMaintenance: MaintenanceLog[] = [
+const initialMaintenance: MaintenanceLog[] = [
   { id: 'MNT-001', vehicle: 'Excavator 320', type: 'Preventive', date: '2026-02-15', cost: 1200, mechanic: 'Ali Garage', description: 'Oil and filter change', nextDate: '2026-05-15' },
   { id: 'MNT-002', vehicle: 'Bobcat S450', type: 'Repair', date: '2026-03-01', cost: 4500, mechanic: 'In-house', description: 'Hydraulic pump repair', nextDate: '2026-06-20' },
   { id: 'MNT-003', vehicle: 'Wheel Loader 950', type: 'Inspection', date: '2025-10-10', cost: 500, mechanic: 'Al Quoz Auto', description: 'General checkup', nextDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] }, // Due in 4 days
 ];
 
 export default function Maintenance() {
+  const [maintenanceLogs, setMaintenanceLogs] = useState<MaintenanceLog[]>(initialMaintenance);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const handleDelete = (id: string) => {
+    setMaintenanceLogs(maintenanceLogs.filter(item => item.id !== id));
+  };
+
+  const handleAddMaintenance = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newLog: MaintenanceLog = {
+      id: `MNT-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+      date: formData.get('date') as string,
+      vehicle: formData.get('vehicle') as string,
+      type: formData.get('type') as string,
+      cost: Number(formData.get('cost')),
+      mechanic: formData.get('mechanic') as string,
+      description: formData.get('description') as string,
+      nextDate: formData.get('nextDate') as string,
+    };
+    setMaintenanceLogs([newLog, ...maintenanceLogs]);
+    setIsAddModalOpen(false);
+  };
 
   const getExpiryStatus = (dateStr: string) => {
     const days = differenceInDays(parseISO(dateStr), new Date());
@@ -61,10 +83,17 @@ export default function Maintenance() {
     },
     {
       header: 'Actions',
-      cell: () => (
+      cell: (row: MaintenanceLog) => (
         <div className="flex flex-row items-center gap-2">
           <button className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-md transition-colors" title="Edit">
             <Edit className="w-4 h-4" />
+          </button>
+          <button 
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md transition-colors" 
+            title="Delete"
+            onClick={() => handleDelete(row.id)}
+          >
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       )
@@ -81,7 +110,7 @@ export default function Maintenance() {
       </div>
 
       <DataTable 
-        data={mockMaintenance} 
+        data={maintenanceLogs} 
         columns={columns} 
         searchPlaceholder="Search by vehicle or maintenance type..."
         onAddClick={() => setIsAddModalOpen(true)}
@@ -93,11 +122,11 @@ export default function Maintenance() {
         onClose={() => setIsAddModalOpen(false)}
         title="Log Maintenance Record"
       >
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setIsAddModalOpen(false); }}>
+        <form className="space-y-4" onSubmit={handleAddMaintenance}>
            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Vehicle</label>
-              <select required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200">
+              <select name="vehicle" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200">
                 <option value="">Select Vehicle...</option>
                 <option>Bobcat S450</option>
                 <option>Excavator 320</option>
@@ -106,7 +135,7 @@ export default function Maintenance() {
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Maintenance Type</label>
-              <select required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200">
+              <select name="type" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200">
                 <option>Preventive</option>
                 <option>Repair</option>
                 <option>Inspection</option>
@@ -115,26 +144,26 @@ export default function Maintenance() {
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Date of Service</label>
-              <input type="date" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
+              <input type="date" name="date" required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Cost (AED)</label>
-              <input type="number" required min="0" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. 1200" />
+              <input type="number" name="cost" required min="0" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. 1200" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Mechanic / Service Center</label>
-              <input type="text" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Ali Garage" />
+              <input type="text" name="mechanic" className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="e.g. Ali Garage" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Next Due Date</label>
               <div className="relative">
-                <input type="date" required className="w-full px-3 py-2 pl-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
+                <input type="date" name="nextDate" required className="w-full px-3 py-2 pl-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" />
                 <CalendarClock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               </div>
             </div>
             <div className="space-y-1.5 sm:col-span-2">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Description of Work</label>
-              <textarea rows={2} required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="Changed hydraulic fluid, replaced 2 hoses..."></textarea>
+              <textarea name="description" rows={2} required className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 dark:text-slate-200" placeholder="Changed hydraulic fluid, replaced 2 hoses..."></textarea>
             </div>
           </div>
           
