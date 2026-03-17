@@ -15,6 +15,7 @@ import Maintenance from './pages/Maintenance';
 import Invoices from './pages/Invoices';
 import Documents from './pages/Documents';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="invoices" element={<Invoices />} />
               <Route path="documents" element={<Documents />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="*" element={<div className="p-6"><h1>404 Not Found</h1></div>} />
             </Route>
           </Route>
