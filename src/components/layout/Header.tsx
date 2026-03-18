@@ -108,8 +108,12 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
                 />
             </div>
             <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-bold text-slate-900 dark:text-white leading-tight">Alex Thompson</span>
-                <span className="text-[11px] text-slate-500 font-medium">Fleet manager</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                  {user?.email?.split('@')[0] || 'Administrator'}
+                </span>
+                <span className="text-[11px] text-slate-500 font-medium capitalize">
+                  {user?.email?.split('@')[0] ? 'Administrator' : 'Fleet manager'}
+                </span>
             </div>
             <ChevronDown className={clsx("w-4 h-4 text-slate-400 transition-transform hidden md:block", userMenuOpen && "rotate-180")} />
           </button>

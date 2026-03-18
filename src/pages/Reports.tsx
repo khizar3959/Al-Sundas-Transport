@@ -48,6 +48,30 @@ export default function Reports() {
     }
   }
 
+  const exportToCSV = () => {
+    if (!summary) return;
+    const data = [
+      ['Metric', 'Value'],
+      ['Total Income', summary.totalIncome],
+      ['Total Expenses', summary.totalExpenses],
+      ['Net Profit', summary.totalIncome - summary.totalExpenses],
+      ['Active Rentals', summary.activeRentals],
+      ['Fleet Size', summary.totalVehicles],
+      ['Total Customers', summary.totalCustomers],
+    ];
+    const csvContent = "data:text/csv;charset=utf-8," + data.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "report_summary.csv");
+    document.body.appendChild(link);
+    link.click();
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const profit = (summary?.totalIncome || 0) - (summary?.totalExpenses || 0);
 
   const kpiCards = [
@@ -102,7 +126,7 @@ export default function Reports() {
                  <option>This Quarter</option>
                  <option>Year to Date</option>
                </select>
-               <Button className="w-full gap-2"><Download className="w-4 h-4" /> Export CSV</Button>
+               <Button onClick={exportToCSV} className="w-full gap-2"><Download className="w-4 h-4" /> Export CSV</Button>
             </div>
           </CardContent>
         </Card>
@@ -125,7 +149,7 @@ export default function Reports() {
                  <option>This Quarter</option>
                  <option>Year to Date</option>
                </select>
-               <Button className="w-full gap-2 bg-slate-800 hover:bg-slate-700 dark:bg-white dark:text-slate-900"><Download className="w-4 h-4" /> Export PDF</Button>
+               <Button onClick={handlePrint} className="w-full gap-2 bg-slate-800 hover:bg-slate-700 dark:bg-white dark:text-slate-900"><Download className="w-4 h-4" /> Export PDF</Button>
             </div>
           </CardContent>
         </Card>
@@ -148,7 +172,7 @@ export default function Reports() {
                  <option>Excavators Only</option>
                  <option>Bobcats Only</option>
                </select>
-               <Button variant="outline" className="w-full gap-2"><Download className="w-4 h-4" /> Export Excel</Button>
+               <Button onClick={exportToCSV} variant="outline" className="w-full gap-2"><Download className="w-4 h-4" /> Export Excel</Button>
             </div>
           </CardContent>
         </Card>

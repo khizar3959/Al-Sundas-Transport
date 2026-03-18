@@ -38,7 +38,7 @@ export default function Invoices() {
           <p className="text-slate-500 dark:text-slate-400">Generate, print, and save professional invoices.</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2"><Download className="w-4 h-4" /> PDF</Button>
+          <Button onClick={handlePrint} variant="outline" className="gap-2"><Download className="w-4 h-4" /> PDF</Button>
           <Button onClick={handlePrint} className="gap-2"><Printer className="w-4 h-4" /> Print Invoice</Button>
         </div>
       </div>

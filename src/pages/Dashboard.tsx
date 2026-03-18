@@ -204,7 +204,7 @@ export default function Dashboard() {
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{booking.vehicle}</td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{booking.dates}</td>
                       <td className="px-6 py-4">
-                        <Badge variant={booking.status === 'Confirmed' ? 'success' : 'warning'} className="rounded-lg px-3 py-1">
+                        <Badge variant={booking.status === 'Confirmed' ? 'success' : 'info'} className="rounded-lg px-3 py-1">
                           {booking.status}
                         </Badge>
                       </td>

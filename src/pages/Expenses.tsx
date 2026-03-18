@@ -14,13 +14,7 @@ interface Expense {
   amount: number;
 }
 
-interface Expense {
-  id: string;
-  date: string;
-  description: string;
-  category: string;
-  amount: number;
-}
+
 
 export default function Expenses() {
   const [expensesList, setExpensesList] = useState<Expense[]>([]);
