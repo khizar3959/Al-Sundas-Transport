@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './components/auth/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import Layout from './components/layout/Layout';
-import Login from './pages/Login';
+import Landing from './pages/Landing';
+import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import Operators from './pages/Operators';
 import Vehicles from './pages/Vehicles';
@@ -22,24 +23,25 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Auth />} />
+          <Route path="/signup" element={<Auth />} />
           
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="operators" element={<Operators />} />
-              <Route path="vehicles" element={<Vehicles />} />
-              <Route path="rentals" element={<Rentals />} />
-              <Route path="customers" element={<Customers />} />
-              <Route path="income" element={<Income />} />
-              <Route path="expenses" element={<Expenses />} />
-              <Route path="fuel" element={<Fuel />} />
-              <Route path="maintenance" element={<Maintenance />} />
-              <Route path="invoices" element={<Invoices />} />
-              <Route path="documents" element={<Documents />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="settings" element={<Settings />} />
+            <Route element={<Layout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/operators" element={<Operators />} />
+              <Route path="/vehicles" element={<Vehicles />} />
+              <Route path="/rentals" element={<Rentals />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/income" element={<Income />} />
+              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/fuel" element={<Fuel />} />
+              <Route path="/maintenance" element={<Maintenance />} />
+              <Route path="/invoices" element={<Invoices />} />
+              <Route path="/documents" element={<Documents />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<div className="p-6"><h1>404 Not Found</h1></div>} />
             </Route>
           </Route>
