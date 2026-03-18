@@ -1,197 +1,211 @@
-import React from 'react';
 import { 
-  Truck, CalendarCheck, CheckCircle2, AlertTriangle, Users, 
-  DollarSign, TrendingUp, TrendingDown, Wallet, Bell
+  TrendingUp, Calendar, Target, DollarSign, ChevronDown, 
+  Info
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
 } from 'recharts';
+import clsx from 'clsx';
 
-const incomeData = [
-  { name: 'Jan', income: 4000, expenses: 2400 },
-  { name: 'Feb', income: 3000, expenses: 1398 },
-  { name: 'Mar', income: 2000, expenses: 9800 },
-  { name: 'Apr', income: 2780, expenses: 3908 },
-  { name: 'May', income: 1890, expenses: 4800 },
-  { name: 'Jun', income: 2390, expenses: 3800 },
+const revenueData = [
+  { name: 'Mon', revenue: 30000 },
+  { name: 'Tue', revenue: 55000 },
+  { name: 'Wed', revenue: 45000 },
+  { name: 'Thu', revenue: 75000 },
+  { name: 'Fri', revenue: 65000 },
+  { name: 'Sat', revenue: 45000 },
+  { name: 'Sun', revenue: 85000 },
 ];
 
-const utilizationData = [
-  { name: 'Assigned', value: 400 },
-  { name: 'Available', value: 300 },
-  { name: 'Maintenance', value: 60 },
+const fleetCompositionData = [
+  { name: 'Sedans', value: 35, color: '#3b82f6' },
+  { name: 'SUVs', value: 25, color: '#f59e0b' },
+  { name: 'Vans', value: 20, color: '#ef4444' },
+  { name: 'Luxury', value: 15, color: '#10b981' },
+  { name: 'Trucks', value: 5, color: '#6366f1' },
 ];
 
-const COLORS = ['#f97316', '#10b981', '#ef4444'];
-const EXPENSE_COLORS = ['#3b82f6', '#8b5cf6', '#eab308', '#ec4899'];
-
-const recentRentals = [
-  { id: 'RN-1029', equip: 'Bobcat S450', customer: 'Emirates Contracting', status: 'Active', amount: 'AED 1,200' },
-  { id: 'RN-1028', equip: 'Excavator 320', customer: 'Dubai Builders', status: 'Pending', amount: 'AED 3,400' },
-  { id: 'RN-1027', equip: 'Wheel Loader', customer: 'Al Futtaim', status: 'Completed', amount: 'AED 2,100' },
+const activeBookings = [
+  { id: '#TRG0123', customer: 'Sarah J.', vehicle: 'Toyota RAV4', dates: 'Oct 26-29', status: 'Confirmed' },
+  { id: '#TRG0122', customer: 'Sarah J.', vehicle: 'Toyota RAV4', dates: 'Oct 26-29', status: 'Confirmed' },
+  { id: '#TRG0124', customer: 'Sarah J.', vehicle: 'Toyota RAV4', dates: 'Oct 26-29', status: 'Confirmed' },
+  { id: '#TRG0125', customer: 'Sarah J.', vehicle: 'Toyota RAV4', dates: 'Oct 26-29', status: 'Pending' },
 ];
 
 export default function Dashboard() {
   return (
-    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="p-6 lg:p-10 space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
-          <p className="text-slate-500 dark:text-slate-400">Welcome back. Here's what's happening today.</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
+        </div>
+        <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 shadow-sm hover:shadow-md transition-all">
+                <Calendar className="w-4 h-4 text-slate-400" />
+                Dashboard
+                <ChevronDown className="w-4 h-4 text-slate-400" />
+            </button>
         </div>
       </div>
 
-      {/* Top Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 dark:bg-orange-500/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <CardContent className="p-5 flex items-center justify-between relative z-10">
-            <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Today Income</p>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">AED 4,500</h3>
-              <p className="text-xs text-emerald-600 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1" /> +12.5%</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center text-orange-600 shadow-sm">
-              <DollarSign className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 dark:bg-blue-500/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <CardContent className="p-5 flex items-center justify-between relative z-10">
-            <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Active Rentals</p>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">24</h3>
-              <p className="text-xs text-emerald-600 mt-1 flex items-center"><TrendingUp className="w-3 h-3 mr-1" /> +3 this week</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center text-blue-600 shadow-sm">
-              <CalendarCheck className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <CardContent className="p-5 flex items-center justify-between relative z-10">
-            <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Available Equipment</p>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">18</h3>
-              <p className="text-xs text-slate-500 mt-1">Out of 45 total</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 shadow-sm">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-red-500">
-          <CardContent className="p-5 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">In Maintenance</p>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">3</h3>
-              <p className="text-xs text-red-500 mt-1 flex items-center"><AlertTriangle className="w-3 h-3 mr-1" /> 1 urgent check</p>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-500/20 flex items-center justify-center text-red-600 shadow-sm animate-pulse duration-2000">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard 
+            title="Total Bookings" 
+            value="1,845" 
+            trend="+12%" 
+            isPositive={true} 
+            icon={<TrendingUp className="w-4 h-4" />} 
+        />
+        <StatCard 
+            title="Fleet Utilization" 
+            value="88%" 
+            trend="+5%" 
+            isPositive={true} 
+            icon={<Target className="w-4 h-4" />} 
+        />
+        <StatCard 
+            title="Revenue" 
+            value="USD 495,300" 
+            trend="+18%" 
+            isPositive={true} 
+            icon={<DollarSign className="w-4 h-4" />} 
+        />
+        <StatCard 
+            title="Active Vehicles" 
+            value="235/265" 
+            isPositive={null} 
+            icon={<Info className="w-4 h-4" />} 
+            showInfo={true}
+        />
       </div>
 
-      {/* Main Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Income vs Expenses</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={incomeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barSize={32}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.2} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                  <Tooltip 
-                    cursor={{fill: 'var(--tw-colors-slate-100)', opacity: 0.1}}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
-                  />
-                  <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                  <Bar dataKey="income" name="Income (AED)" fill="#f97316" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expenses" name="Expenses (AED)" fill="#94a3b8" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <Card className="lg:col-span-8 overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-lg">Weekly Revenue Trends</CardTitle>
+            <div className="flex items-center gap-2">
+                <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 transition-all">
+                    All Revenue
+                    <ChevronDown className="w-3 h-3" />
+                </button>
             </div>
+          </CardHeader>
+          <CardContent className="h-[350px] p-6 pt-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }} 
+                    dy={10} 
+                />
+                <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 12, fill: '#64748b' }} 
+                    tickFormatter={(val) => `$${val/1000}k`}
+                />
+                <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: '#1e293b', color: '#fff' }}
+                    itemStyle={{ color: '#fff' }}
+                />
+                <Area 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#10b981" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorRevenue)" 
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="lg:col-span-4">
           <CardHeader>
-            <CardTitle>Equipment Status</CardTitle>
+            <CardTitle className="text-lg">Fleet Composition</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full flex items-center justify-center relative">
+          <CardContent className="p-6 pt-0">
+            <div className="h-[250px] w-full relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={utilizationData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={95}
-                    paddingAngle={3}
+                    data={fleetCompositionData}
+                    innerRadius={60}
+                    outerRadius={85}
+                    paddingAngle={5}
                     dataKey="value"
                     stroke="none"
                   >
-                    {utilizationData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    {fleetCompositionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    itemStyle={{ color: '#0f172a' }}
-                  />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                  <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-                <span className="text-3xl font-bold text-slate-900 dark:text-white">45</span>
-                <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total</span>
-              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+                {fleetCompositionData.map((item) => (
+                    <div key={item.name} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                            <span className="text-slate-600 dark:text-slate-400 font-medium">{item.name}</span>
+                        </div>
+                        <span className="text-slate-900 dark:text-white font-bold">{item.value}%</span>
+                    </div>
+                ))}
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <Card className="xl:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle>Recent Rentals</CardTitle>
-            <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">View All</button>
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <Card className="lg:col-span-8 overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-lg">Active Bookings Overview</CardTitle>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400">
+                More
+                <ChevronDown className="w-3 h-3" />
+            </button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-slate-800/50 dark:text-slate-400">
+              <table className="w-full text-sm text-left border-collapse">
+                <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 font-medium">
                   <tr>
-                    <th className="px-4 py-3 rounded-l-lg font-semibold">ID</th>
-                    <th className="px-4 py-3 font-semibold">Customer</th>
-                    <th className="px-4 py-3 font-semibold">Equipment</th>
-                    <th className="px-4 py-3 text-right rounded-r-lg font-semibold">Status</th>
+                    <th className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">Booking ID</th>
+                    <th className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">Customer</th>
+                    <th className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">Vehicle</th>
+                    <th className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">Dates</th>
+                    <th className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">Status</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {recentRentals.map((rental, i) => (
-                    <tr key={i} className="border-b border-slate-100 dark:border-slate-800 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                      <td className="px-4 py-4 font-medium text-slate-900 dark:text-white">{rental.id}</td>
-                      <td className="px-4 py-4">{rental.customer}</td>
-                      <td className="px-4 py-4 text-slate-500 dark:text-slate-400">{rental.equip}</td>
-                      <td className="px-4 py-4 text-right">
-                        <Badge variant={rental.status === 'Active' ? 'success' : rental.status === 'Pending' ? 'warning' : 'default'}>
-                          {rental.status}
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {activeBookings.map((booking, i) => (
+                    <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 font-bold text-blue-600 dark:text-blue-400">{booking.id}</td>
+                      <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-medium">{booking.customer}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{booking.vehicle}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{booking.dates}</td>
+                      <td className="px-6 py-4">
+                        <Badge variant={booking.status === 'Confirmed' ? 'success' : 'warning'} className="rounded-lg px-3 py-1">
+                          {booking.status}
                         </Badge>
                       </td>
                     </tr>
@@ -202,35 +216,72 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Warning Expiry Alerts Preview */}
-        <Card className="border-t-4 border-t-orange-500 xl:col-span-1 shadow-md">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-orange-600 dark:text-orange-500">
-              <Bell className="w-5 h-5 bg-orange-100 dark:bg-orange-500/20 p-1.5 rounded-md box-content" />
-              Action Required
-            </CardTitle>
+        <Card className="lg:col-span-4 overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-lg">Vehicle Availability</CardTitle>
           </CardHeader>
-          <CardContent>
-             <div className="space-y-4">
-               <div className="group flex items-start gap-4 p-3.5 rounded-xl bg-orange-50 hover:bg-orange-100/70 dark:bg-orange-500/10 dark:hover:bg-orange-500/20 border border-orange-100 dark:border-orange-500/20 transition-all cursor-pointer">
-                 <Truck className="w-5 h-5 text-orange-600 dark:text-orange-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
-                 <div>
-                   <h4 className="text-sm font-semibold text-orange-800 dark:text-orange-300">Registration Expiring Soon</h4>
-                   <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 leading-snug">Wheel Loader (DX-9901) registration expires in 3 days.</p>
-                 </div>
-               </div>
-               
-               <div className="group flex items-start gap-4 p-3.5 rounded-xl bg-red-50 hover:bg-red-100/70 dark:bg-red-500/10 dark:hover:bg-red-500/20 border border-red-100 dark:border-red-500/20 transition-all cursor-pointer">
-                 <Users className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform" />
-                 <div>
-                   <h4 className="text-sm font-semibold text-red-800 dark:text-red-300">License Expired</h4>
-                   <p className="text-xs text-red-600 dark:text-red-400 mt-1 leading-snug">Operator Ahmed Khan's license expired yesterday.</p>
-                 </div>
-               </div>
+          <CardContent className="p-0 relative h-[300px]">
+             {/* Map Placeholder */}
+             <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
+                <div className="text-center p-6">
+                    <div className="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Target className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white">Active Global Tracking</p>
+                    <p className="text-xs text-slate-500 mt-1">235 vehicles currently active worldwide</p>
+                </div>
+                {/* Simulated Pins */}
+                <div className="absolute top-1/4 left-1/3 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+                <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-pulse delay-75"></div>
+                <div className="absolute top-1/2 right-1/2 w-3 h-3 bg-blue-600 rounded-full border-2 border-white shadow-lg animate-pulse delay-150"></div>
              </div>
           </CardContent>
         </Card>
       </div>
     </div>
   );
+}
+
+function StatCard({ title, value, trend, isPositive, icon, showInfo }: { 
+    title: string, 
+    value: string, 
+    trend?: string, 
+    isPositive: boolean | null, 
+    icon: React.ReactNode,
+    showInfo?: boolean
+}) {
+    return (
+        <Card className="hover:shadow-md transition-all">
+            <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">{title}</p>
+                    {showInfo && <Info className="w-4 h-4 text-slate-300" />}
+                    {!showInfo && (
+                        <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
+                             {icon}
+                        </div>
+                    )}
+                </div>
+                <div className="flex items-end justify-between">
+                    <div>
+                        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{value}</h3>
+                        {trend && (
+                            <div className={clsx(
+                                "flex items-center gap-1 mt-1 text-xs font-bold",
+                                isPositive ? "text-emerald-500" : "text-red-500"
+                            )}>
+                                {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingUp className="w-3 h-3 rotate-180" />}
+                                {trend}
+                            </div>
+                        )}
+                    </div>
+                    {showInfo && (
+                        <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+                             {icon}
+                        </div>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
+    );
 }

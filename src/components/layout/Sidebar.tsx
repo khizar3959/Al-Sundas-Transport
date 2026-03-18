@@ -25,60 +25,68 @@ const navItems = [
 export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (v: boolean) => void }) {
   return (
     <aside className={clsx(
-      "h-full bg-white dark:bg-[#11131e] border-r border-slate-200 dark:border-slate-800 transition-all duration-300 flex flex-col z-20",
-      isOpen ? "w-64" : "w-16"
+      "h-full transition-all duration-300 flex flex-col z-20",
+      "bg-[#0f172a] text-slate-400 border-r border-slate-800", // Dark Navy Sidebar
+      isOpen ? "w-64" : "w-20"
     )}>
-      <div className="h-16 flex items-center justify-between px-3.5 border-b border-slate-200 dark:border-slate-800">
-        <div className={clsx("flex items-center gap-3 font-bold text-xl text-orange-500 overflow-hidden", !isOpen && "w-0 opacity-0 hidden")}>
-          <div className="w-8 h-8 rounded bg-orange-500/20 flex items-center justify-center shrink-0">
-            <Truck className="w-5 h-5 text-orange-500" />
+      <div className="h-20 flex items-center justify-between px-6">
+        <div className={clsx("flex items-center gap-2 overflow-hidden", !isOpen && "w-0 opacity-0 hidden")}>
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shrink-0">
+             <div className="relative">
+                <Truck className="w-5 h-5 text-white" />
+                <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-blue-400 rounded-full border-2 border-[#0f172a]"></div>
+             </div>
           </div>
-          <span className="whitespace-nowrap">Al Sundas</span>
+          <div className="flex flex-col">
+            <span className="text-white font-bold text-sm tracking-tight leading-tight">Al Sundas</span>
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">Transport</span>
+          </div>
         </div>
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mx-auto"
+          className="p-1.5 rounded-md text-slate-500 hover:bg-slate-800 transition-colors mx-auto"
         >
           {isOpen ? <ChevronLeft className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1 custom-scrollbar">
+      <div className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2 custom-scrollbar">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) => clsx(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
+              "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative",
               isActive 
-                ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 font-medium" 
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200",
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" 
+                : "hover:bg-slate-800/50 hover:text-slate-200",
               !isOpen && "justify-center px-0"
             )}
             title={!isOpen ? item.name : undefined}
           >
-            <item.icon className="w-5 h-5 shrink-0" />
-            <span className={clsx("whitespace-nowrap transition-all duration-300", !isOpen && "w-0 opacity-0 hidden")}>
+            <item.icon className={clsx("w-5 h-5 shrink-0", !isOpen && "mx-auto")} />
+            <span className={clsx("font-medium text-[13px] whitespace-nowrap transition-all duration-300", !isOpen && "hidden")}>
               {item.name}
             </span>
+            {/* Active indicator dot/bar if needed - image shows a solid background for active */}
           </NavLink>
         ))}
       </div>
       
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800">
+      <div className="p-4 border-t border-slate-800">
          <NavLink
             to="/settings"
             className={({ isActive }) => clsx(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+              "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200",
               isActive 
-                ? "bg-orange-500/10 text-orange-600 dark:text-orange-500 font-medium" 
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800",
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" 
+                : "hover:bg-slate-800/50 hover:text-slate-200",
                !isOpen && "justify-center px-0"
             )}
             title={!isOpen ? "Settings" : undefined}
           >
             <Settings className="w-5 h-5 shrink-0" />
-            <span className={clsx("whitespace-nowrap", !isOpen && "hidden")}>Settings</span>
+            <span className={clsx("font-medium text-[13px] whitespace-nowrap", !isOpen && "hidden")}>Settings</span>
           </NavLink>
       </div>
     </aside>
