@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Printer, Download, FileText, Truck } from 'lucide-react';
+import { Printer, Download, Truck } from 'lucide-react';
 
 export default function Invoices() {
   const [invoiceData, setInvoiceData] = useState({
@@ -18,6 +18,17 @@ export default function Invoices() {
     rateType: 'Hourly',
     totalHours: 80,
     vatRate: 5,
+  });
+
+  const [companyDetails, setCompanyDetails] = useState({
+    name: 'Al Sundas Transport LLC',
+    logoName: 'AL SUNDAS',
+    logoSubtitle: 'Transport & Equipment',
+    address: 'Al Quoz Industrial Area 3, Dubai, UAE',
+    trn: '100234567800003',
+    bankName: 'Emirates NBD',
+    accountNumber: '1234567890',
+    iban: 'AE0000000001234567890'
   });
 
   const printRef = useRef<HTMLDivElement>(null);
@@ -79,6 +90,53 @@ export default function Invoices() {
                </div>
              </CardContent>
            </Card>
+
+           <Card>
+             <div className="p-4 border-b border-slate-200 dark:border-slate-800 font-semibold text-slate-800 dark:text-slate-200">
+               My Company Details
+             </div>
+             <CardContent className="space-y-4 p-4">
+               <div>
+                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Full Business Name</label>
+                  <input type="text" value={companyDetails.name} onChange={e => setCompanyDetails({...companyDetails, name: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+               </div>
+               <div className="grid grid-cols-2 gap-3">
+                 <div>
+                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Logo Title</label>
+                    <input type="text" value={companyDetails.logoName} onChange={e => setCompanyDetails({...companyDetails, logoName: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+                 </div>
+                 <div>
+                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Logo Subtitle</label>
+                    <input type="text" value={companyDetails.logoSubtitle} onChange={e => setCompanyDetails({...companyDetails, logoSubtitle: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+                 </div>
+               </div>
+               <div>
+                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Business Address</label>
+                  <textarea value={companyDetails.address} onChange={e => setCompanyDetails({...companyDetails, address: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none h-20 resize-none" />
+               </div>
+               <div>
+                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">TRN / Tax Number</label>
+                  <input type="text" value={companyDetails.trn} onChange={e => setCompanyDetails({...companyDetails, trn: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+               </div>
+               <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase mb-3">Bank Information</h4>
+                  <div className="space-y-3">
+                    <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Bank Name</label>
+                        <input type="text" value={companyDetails.bankName} onChange={e => setCompanyDetails({...companyDetails, bankName: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+                    </div>
+                    <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Account Number</label>
+                        <input type="text" value={companyDetails.accountNumber} onChange={e => setCompanyDetails({...companyDetails, accountNumber: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+                    </div>
+                    <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">IBAN</label>
+                        <input type="text" value={companyDetails.iban} onChange={e => setCompanyDetails({...companyDetails, iban: e.target.value})} className="mt-1 w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none" />
+                    </div>
+                  </div>
+               </div>
+             </CardContent>
+           </Card>
         </div>
 
         {/* Invoice Preview */}
@@ -91,8 +149,8 @@ export default function Invoices() {
                     <Truck className="w-8 h-8 print:text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold tracking-tight">AL SUNDAS</h2>
-                    <p className="text-sm font-semibold tracking-widest uppercase text-slate-500">Transport & Equipment</p>
+                    <h2 className="text-2xl font-bold tracking-tight">{companyDetails.logoName}</h2>
+                    <p className="text-sm font-semibold tracking-widest uppercase text-slate-500">{companyDetails.logoSubtitle}</p>
                   </div>
                </div>
                <div className="text-right">
@@ -105,8 +163,8 @@ export default function Invoices() {
              <div className="grid grid-cols-2 gap-8 mt-8">
                <div>
                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">From</p>
-                 <p className="font-bold text-slate-800">Al Sundas Transport LLC</p>
-                 <p className="text-slate-500 text-sm mt-1">Al Quoz Industrial Area 3<br/>Dubai, United Arab Emirates<br/>TRN: 100234567800003</p>
+                 <p className="font-bold text-slate-800">{companyDetails.name}</p>
+                 <p className="text-slate-500 text-sm mt-1">{companyDetails.address}<br/>TRN: {companyDetails.trn}</p>
                </div>
                <div className="text-right">
                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Bill To</p>
@@ -174,8 +232,8 @@ export default function Invoices() {
 
              {/* Footer */}
              <div className="mt-16 pt-8 border-t border-slate-200 text-xs text-slate-400 text-center">
-               <p>Make all checks payable to Al Sundas Transport LLC.</p>
-               <p className="mt-1">Bank: Emirates NBD | Account: 1234567890 | IBAN: AE0000000001234567890</p>
+               <p>Make all checks payable to {companyDetails.name}.</p>
+               <p className="mt-1">Bank: {companyDetails.bankName} | Account: {companyDetails.accountNumber} | IBAN: {companyDetails.iban}</p>
                <p className="mt-4 font-medium text-slate-500">Thank you for your business!</p>
              </div>
           </div>
