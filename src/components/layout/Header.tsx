@@ -53,7 +53,7 @@ export default function Header({ toggleSidebar }: { toggleSidebar: () => void })
   };
 
   return (
-    <header className="h-20 bg-[#f8fafc]/80 dark:bg-[#0f172a]/80 backdrop-blur-md flex items-center justify-between px-6 lg:px-10 z-10 sticky top-0 transition-all duration-300">
+    <header className="h-20 bg-[#f8fafc]/80 dark:bg-[#0f172a]/80 backdrop-blur-md flex items-center justify-between px-6 lg:px-10 z-10 sticky top-0 transition-all duration-300 print:hidden">
       <div className="flex items-center gap-6 flex-1">
         <button 
           onClick={toggleSidebar}

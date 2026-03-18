@@ -25,7 +25,7 @@ const navItems = [
 export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (v: boolean) => void }) {
   return (
     <aside className={clsx(
-      "h-full transition-all duration-300 flex flex-col z-20",
+      "h-full transition-all duration-300 flex flex-col z-20 print:hidden",
       "bg-[#0f172a] text-slate-400 border-r border-slate-800", // Dark Navy Sidebar
       isOpen ? "w-64" : "w-20"
     )}>

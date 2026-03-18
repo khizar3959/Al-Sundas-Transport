@@ -120,7 +120,7 @@ export default function Reports() {
           </div>
           <CardContent className="p-6">
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Detailed ledger of all income sources, rentals, and payments received across selected timeframes.</p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 print:hidden">
                <select className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none dark:text-slate-200">
                  <option>Last 30 Days</option>
                  <option>This Quarter</option>
@@ -143,7 +143,7 @@ export default function Reports() {
           </div>
           <CardContent className="p-6">
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Aggregate view of fuel, maintenance, salaries, and other operational expenses.</p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 print:hidden">
                <select className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none dark:text-slate-200">
                  <option>Last 30 Days</option>
                  <option>This Quarter</option>
@@ -166,7 +166,7 @@ export default function Reports() {
           </div>
           <CardContent className="p-6">
             <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">Metrics on equipment usage, dormant days, and maintenance downtime analysis.</p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 print:hidden">
                <select className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:outline-none dark:text-slate-200">
                  <option>All Equipment</option>
                  <option>Excavators Only</option>
